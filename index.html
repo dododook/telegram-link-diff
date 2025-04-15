@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>链接数字差值计算器</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f7f7f7;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 18px;
+      text-align: center;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h1>Telegram 链接差值计算器</h1>
+  
+  <label for="original">原始链接：</label>
+  <input type="text" id="original" placeholder="例如：https://t.me/Pornemby/7803150">
+  
+  <label for="current">当前链接：</label>
+  <input type="text" id="current" placeholder="例如：https://t.me/Pornemby/7803321">
+  
+  <button onclick="calculate()">计算</button>
+  
+  <div class="result" id="result"></div>
+  
+  <script>
+    function extractNumber(url) {
+      const match = url.trim().match(/\/(\d+)(\/?)$/);
+      return match ? parseInt(match[1]) : null;
+    }
+
+    function calculate() {
+      const originalUrl = document.getElementById('original').value;
+      const currentUrl = document.getElementById('current').value;
+      const num1 = extractNumber(originalUrl);
+      const num2 = extractNumber(currentUrl);
+      
+      const resultDiv = document.getElementById('result');
+
+      if (num1 === null || num2 === null) {
+        resultDiv.textContent = "❌ 无法从链接中提取数字，请检查格式。";
+        return;
+      }
+
+      const diff = num2 - num1;
+      resultDiv.textContent = `✅ 当前比原始多了 ${diff}。`;
+    }
+  </script>
+</body>
+</html>
