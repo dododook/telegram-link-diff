@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>链接数字差值计算器</title>
+  <title>链接数字差值计算器 + Google 搜图</title>
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
@@ -21,17 +21,13 @@
       display: block;
       margin-top: 20px;
     }
-    input {
+    input, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
       font-size: 16px;
     }
     button {
-      margin-top: 30px;
-      width: 100%;
-      padding: 15px;
-      font-size: 18px;
       background-color: #4CAF50;
       color: white;
       border: none;
@@ -42,26 +38,45 @@
       background-color: #45a049;
     }
     .result {
-      margin-top: 30px;
+      margin-top: 20px;
       font-size: 18px;
       text-align: center;
       color: #222;
     }
+    .preview {
+      margin-top: 20px;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      max-height: 200px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1>Telegram 链接差值计算器</h1>
-  
+  <h1>Telegram 链接差值计算器 + Google 搜图</h1>
+
   <label for="original">原始链接：</label>
   <input type="text" id="original" placeholder="例如：https://t.me/Pornemby/7803150">
-  
+
   <label for="current">当前链接：</label>
   <input type="text" id="current" placeholder="例如：https://t.me/Pornemby/7803321">
-  
-  <button onclick="calculate()">计算</button>
-  
+
+  <button onclick="calculate()">计算差值</button>
+
   <div class="result" id="result"></div>
-  
+
+  <hr>
+
+  <label for="imageInput">上传截图进行 Google 搜图：</label>
+  <input type="file" id="imageInput" accept="image/*">
+
+  <div class="preview">
+    <img id="previewImage" src="#" alt="预览图" style="display:none;">
+  </div>
+
   <script>
     function extractNumber(url) {
       const match = url.trim().match(/\/(\d+)(\/?)$/);
@@ -73,7 +88,6 @@
       const currentUrl = document.getElementById('current').value;
       const num1 = extractNumber(originalUrl);
       const num2 = extractNumber(currentUrl);
-      
       const resultDiv = document.getElementById('result');
 
       if (num1 === null || num2 === null) {
@@ -84,6 +98,42 @@
       const diff = num2 - num1;
       resultDiv.textContent = `✅ 当前比原始多了 ${diff}。`;
     }
+
+    // Google 搜图处理
+    document.getElementById('imageInput').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // 预览图
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const preview = document.getElementById('previewImage');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+
+      // 创建 form 上传给 Google
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.enctype = 'multipart/form-data';
+      form.action = 'https://www.google.com/searchbyimage/upload';
+      form.target = '_blank';
+
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.name = 'encoded_image';
+      form.appendChild(input);
+
+      // 复制文件对象
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      input.files = dataTransfer.files;
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    });
   </script>
 </body>
 </html>
